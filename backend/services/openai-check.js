@@ -18,6 +18,11 @@ async function checkOpenAICredits() {
     };
   }
 
+  // Optional: skip pre-check (e.g. if you use pay-as-you-go and the check gives false negatives)
+  if (process.env.SKIP_OPENAI_CREDITS_CHECK === 'true') {
+    return { valid: true, hasCredits: true, message: 'Credits check skipped (SKIP_OPENAI_CREDITS_CHECK=true).' };
+  }
+
   try {
     const client = new OpenAI({ apiKey: apiKey });
     
@@ -29,15 +34,18 @@ async function checkOpenAICredits() {
         max_tokens: 5
       });
       
-      // If we get a response, the key is valid
       return {
         valid: true,
         hasCredits: true,
         message: 'OpenAI API key is valid and has credits.'
       };
     } catch (apiError) {
-      // Check for specific error codes
-      if (apiError.status === 401) {
+      const status = apiError.status ?? apiError.statusCode;
+      const message = apiError.message || String(apiError);
+      const code = apiError.code || apiError.error?.code;
+      console.warn('[OpenAI credits check] API error:', { status, code, message: message.substring(0, 200) });
+
+      if (status === 401) {
         return {
           valid: false,
           hasCredits: false,
@@ -45,7 +53,7 @@ async function checkOpenAICredits() {
         };
       }
       
-      if (apiError.status === 429) {
+      if (status === 429) {
         return {
           valid: true,
           hasCredits: false,
@@ -53,7 +61,8 @@ async function checkOpenAICredits() {
         };
       }
       
-      if (apiError.message && apiError.message.includes('insufficient_quota')) {
+      // Only treat as "no credits" for clear quota/billing errors
+      if (status === 402 || message.includes('insufficient_quota') || (message.includes('billing') && message.toLowerCase().includes('add payment'))) {
         return {
           valid: true,
           hasCredits: false,
@@ -61,22 +70,15 @@ async function checkOpenAICredits() {
         };
       }
       
-      if (apiError.message && apiError.message.includes('billing')) {
-        return {
-          valid: true,
-          hasCredits: false,
-          message: 'OpenAI API billing issue. Please check your OpenAI account billing settings.'
-        };
-      }
-      
-      // Other errors - might be temporary
+      // Other errors (e.g. network, model name) – allow job to run; real error will show at transcribe/summarize
       return {
         valid: true,
-        hasCredits: true, // Assume credits exist for other errors
-        message: `OpenAI API check warning: ${apiError.message}`
+        hasCredits: true,
+        message: `OpenAI pre-check warning: ${message.substring(0, 100)}`
       };
     }
   } catch (error) {
+    console.warn('[OpenAI credits check] Error:', error.message);
     return {
       valid: false,
       hasCredits: false,

@@ -3,7 +3,6 @@ const { downloadAudio, getVideoInfo } = require('../services/youtube');
 const { extractAudioFromVideo } = require('../services/video-file');
 const { transcribeAudioChunked } = require('../services/transcribe');
 const { summarizeTranscriptMapReduce } = require('../services/summarize');
-const { checkOpenAICredits } = require('../services/openai-check');
 const { MAX_VIDEO_DURATION_SECONDS } = require('../config/constants');
 const fs = require('fs');
 const path = require('path');
@@ -22,18 +21,7 @@ async function processVideoJob(job) {
   let uploadedVideoFile = null;
 
   try {
-    // Update job progress
-    await updateJobProgress(job, { stage: 'checking_credits', progress: 5 });
-
-    // Step 1: Check OpenAI credits
-    console.log(`[Job ${jobId}] Checking OpenAI API credits...`);
-    const creditStatus = await checkOpenAICredits();
-    
-    if (!creditStatus.valid || !creditStatus.hasCredits) {
-      throw new Error(`OpenAI API credits issue: ${creditStatus.message}`);
-    }
-
-    await updateJobProgress(job, { stage: 'checking_duration', progress: 10 });
+    await updateJobProgress(job, { stage: 'checking_duration', progress: 5 });
 
     let videoInfo;
     let durationSeconds;

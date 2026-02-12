@@ -11,7 +11,7 @@ const execAsync = promisify(exec);
  * @returns {Promise<string>} - Path to extracted audio file
  */
 async function extractAudioFromVideo(videoFilePath) {
-  const outputDir = path.join(__dirname, '..', '..');
+  const outputDir = path.join(__dirname, '..');
   const audioFilePath = path.join(outputDir, 'audio.mp3');
 
   try {

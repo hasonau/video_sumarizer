@@ -86,7 +86,7 @@ async function getVideoInfo(url) {
  * @returns {Promise<string>} - Path to downloaded audio file
  */
 async function downloadAudio(url) {
-  const outputDir = path.join(__dirname, '..', '..');
+  const outputDir = path.join(__dirname, '..');
   const outputTemplate = path.join(outputDir, 'audio.%(ext)s');
   
   try {
@@ -103,7 +103,7 @@ async function downloadAudio(url) {
     let downloadedFile = null;
     
     for (const ext of possibleExtensions) {
-      const filePath = path.join(outputDir, `audio${ext}`);
+      const filePath = path.join(__dirname, '..', `audio${ext}`);
       if (fs.existsSync(filePath)) {
         downloadedFile = filePath;
         console.log(`✅ Audio file downloaded: ${downloadedFile}`);

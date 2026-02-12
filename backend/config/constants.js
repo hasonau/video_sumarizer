@@ -1,12 +1,17 @@
-require('dotenv').config();
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 const fs = require('fs');
 
-// Resolve yt-dlp: 1) YT_DLP_PATH in .env, 2) project/bin/yt-dlp.exe, 3) "yt-dlp" (PATH)
-const projectRoot = path.join(__dirname, '..', '..');
-const localYtDlp = path.join(projectRoot, 'bin', 'yt-dlp.exe');
+// Resolve yt-dlp: 1) YT_DLP_PATH in .env, 2) backend/bin/yt-dlp.exe, 3) project-root/bin/yt-dlp.exe, 4) "yt-dlp" (PATH)
+const backendRoot = path.join(__dirname, '..');
+const projectRoot = path.join(backendRoot, '..');
+const backendBinYtDlp = path.join(backendRoot, 'bin', 'yt-dlp.exe');
+const projectBinYtDlp = path.join(projectRoot, 'bin', 'yt-dlp.exe');
 const envPath = process.env.YT_DLP_PATH ? process.env.YT_DLP_PATH.trim() : null;
-const YT_DLP_COMMAND = envPath || (fs.existsSync(localYtDlp) ? localYtDlp : 'yt-dlp');
+const YT_DLP_COMMAND = envPath
+  || (fs.existsSync(backendBinYtDlp) ? backendBinYtDlp : null)
+  || (fs.existsSync(projectBinYtDlp) ? projectBinYtDlp : null)
+  || 'yt-dlp';
 
 module.exports = {
   YT_DLP_COMMAND,

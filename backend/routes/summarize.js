@@ -5,14 +5,13 @@ const fs = require('fs');
 const { videoQueue } = require('../queue/queue');
 const { validateYouTubeURL } = require('../utils/url-validator');
 const { getVideoInfo } = require('../services/youtube');
-const { checkOpenAICredits } = require('../services/openai-check');
 const { MAX_VIDEO_DURATION_SECONDS } = require('../config/constants');
 const { v4: uuidv4 } = require('uuid');
 
 const router = express.Router();
 
 // Configure multer for file uploads
-const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
+const uploadsDir = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -77,19 +76,7 @@ router.post('/summarize', async (req, res) => {
       });
     }
 
-    // Step 3: Check OpenAI credits BEFORE creating job
-    console.log('Checking OpenAI API credits...');
-    const creditStatus = await checkOpenAICredits();
-    
-    if (!creditStatus.valid || !creditStatus.hasCredits) {
-      return res.status(503).json({
-        error: creditStatus.message,
-        code: 'NO_OPENAI_CREDITS',
-        details: 'The OpenAI API key credits are empty or invalid. Please contact the owner to add credits to their OpenAI account.'
-      });
-    }
-
-    // Step 4: Check video duration BEFORE creating job
+    // Step 3: Check video duration BEFORE creating job (no credits pre-check; job will fail later if key invalid)
     console.log(`Checking video duration for: ${url}`);
     const videoInfo = await getVideoInfo(url);
     
@@ -173,20 +160,7 @@ router.post('/upload', upload.single('video'), async (req, res) => {
     const videoFilePath = req.file.path;
     const fileName = req.file.originalname;
 
-    // Step 1: Check OpenAI credits BEFORE processing
-    console.log('Checking OpenAI API credits...');
-    const creditStatus = await checkOpenAICredits();
-    
-    if (!creditStatus.valid || !creditStatus.hasCredits) {
-      fs.unlinkSync(videoFilePath);
-      return res.status(503).json({
-        error: creditStatus.message,
-        code: 'NO_OPENAI_CREDITS',
-        details: 'The OpenAI API key credits are empty or invalid. Please contact the owner to add credits to their OpenAI account.'
-      });
-    }
-
-    // Step 2: No duration check for uploaded files — accept and process directly
+    // No credits pre-check; job will fail later if key invalid. No duration check for uploads.
     console.log(`Uploaded file accepted: ${fileName}. Will extract audio, transcribe, and summarize.`);
 
     const jobId = uuidv4();

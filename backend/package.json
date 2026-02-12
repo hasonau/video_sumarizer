@@ -1,7 +1,25 @@
 {
-  "name": "youtube-summarizer-backend",
+  "name": "video-summarizer-backend",
   "version": "1.0.0",
-  "description": "Backend server for YouTube Video Summarizer",
+  "description": "Backend API for Video Summarizer (Node.js, Express, yt-dlp, ffmpeg)",
   "main": "index.js",
-  "type": "commonjs"
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "serverless-http": "^3.2.0",
+    "bullmq": "^5.68.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "express-rate-limit": "^7.5.1",
+    "ioredis": "^5.9.3",
+    "multer": "^2.0.2",
+    "openai": "^6.21.0",
+    "uuid": "^9.0.1"
+  }
 }

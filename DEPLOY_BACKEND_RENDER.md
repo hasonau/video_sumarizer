@@ -21,7 +21,7 @@ Deploy backend first, then use the backend URL when you deploy the frontend (Ver
 |-------|--------|
 | **Name** | `video-summarizer-api` (or any name) |
 | **Region** | Choose closest to you |
-| **Root Directory** | Leave **empty** (use whole repo) |
+| **Root Directory** | `backend` |
 | **Runtime** | **Node** |
 | **Build Command** | `npm install` |
 | **Start Command** | `npm start` |
