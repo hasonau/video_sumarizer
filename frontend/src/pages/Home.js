@@ -30,6 +30,18 @@ function getErrorMessage(err) {
     msg = `❌ File too large\n\nMaximum file size is 500MB.`;
   } else if (errorData?.code === 'MISSING_FILE') {
     msg = `❌ No file selected\n\nPlease select a video file to upload.`;
+  } else if (
+    err.response?.status === 404 &&
+    (errorData?.message || '').toLowerCase().includes('vercel') &&
+    (errorData?.message || '').toLowerCase().includes('render')
+  ) {
+    msg =
+      '⚠️ This backend URL is the Vercel health-check only (no summarization).\n\n' +
+      'To summarize videos:\n' +
+      '• Deploy the full backend on Render (see DEPLOY_BACKEND_RENDER.md).\n' +
+      '• In your frontend project (e.g. Vercel), set Environment Variable:\n' +
+      '  REACT_APP_API_URL = your Render backend URL (e.g. https://your-app.onrender.com)\n' +
+      '• Redeploy the frontend so it uses the Render API.';
   } else if (!err.response) {
     msg = `Cannot reach the backend.\n\n• Is the backend running? (e.g. \`cd backend && npm start\`)\n• If frontend and backend are on different hosts, set REACT_APP_API_URL to your backend URL.\n\n${err.message || 'Network error'}`;
   }
@@ -58,7 +70,15 @@ export default function Home() {
   useEffect(() => {
     api.checkHealth()
       .then(res => {
-        setApiStatus(res.data?.success && (res.data?.message || '').toLowerCase().includes('running') ? 'running' : 'error');
+        if (!res.data?.success) {
+          setApiStatus('error');
+          return;
+        }
+        if (res.data?.healthOnly) {
+          setApiStatus('health_only');
+          return;
+        }
+        setApiStatus((res.data?.message || '').toLowerCase().includes('running') ? 'running' : 'error');
       })
       .catch(() => setApiStatus('error'));
   }, []);

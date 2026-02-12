@@ -7,6 +7,11 @@ export function WelcomeSection({ apiStatus }) {
         {apiStatus === 'running' && (
           <div className="api-status-banner">✅ All APIs are running</div>
         )}
+        {apiStatus === 'health_only' && (
+          <div className="api-status-banner warning">
+            ⚠️ Backend is reachable but summarization is not available here. Set <strong>REACT_APP_API_URL</strong> to your <strong>Render</strong> backend URL (see DEPLOY_BACKEND_RENDER.md) and redeploy the frontend.
+          </div>
+        )}
         {apiStatus === 'error' && (
           <div className="api-status-banner error">
             ⚠️ Cannot reach backend. Check REACT_APP_API_URL or ensure backend is deployed.

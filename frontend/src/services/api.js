@@ -4,7 +4,7 @@
  */
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'https://video-sumarizer.vercel.app';
+const API_BASE = process.env.REACT_APP_API_URL || 'localhost:5000';
 
 export const api = {
   checkHealth() {
