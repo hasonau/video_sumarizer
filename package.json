@@ -1,0 +1,29 @@
+{
+  "name": "youtube-video-summarizer",
+  "version": "1.0.0",
+  "description": "YouTube Video Summarizer using Node.js and React",
+  "main": "backend/index.js",
+  "scripts": {
+    "dev": "node backend/index.js",
+    "start": "node backend/index.js"
+  },
+  "keywords": [
+    "youtube",
+    "summarizer",
+    "openai",
+    "whisper"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bullmq": "^5.68.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "express-rate-limit": "^7.5.1",
+    "ioredis": "^5.9.3",
+    "multer": "^2.0.2",
+    "openai": "^6.21.0",
+    "uuid": "^9.0.1"
+  }
+}

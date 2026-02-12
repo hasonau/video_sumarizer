@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment and secrets (never commit)
+.env
+.env.local
+.env.*.local
+
+# Build output
+frontend/build/
+dist/
+
+# Audio / temp files
+*.mp3
+*.m4a
+*.webm
+*.ogg
+
+# Local yt-dlp (optional)
+bin/
+
+# Uploaded video files
+uploads/
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.mkv
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python (if any)
+__pycache__/
+*.pyc
+venv/

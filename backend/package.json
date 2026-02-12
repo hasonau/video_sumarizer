@@ -1,0 +1,7 @@
+{
+  "name": "youtube-summarizer-backend",
+  "version": "1.0.0",
+  "description": "Backend server for YouTube Video Summarizer",
+  "main": "index.js",
+  "type": "commonjs"
+}
