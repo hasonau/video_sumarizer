@@ -8,7 +8,7 @@ function formatSummary(text) {
     if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')) {
       return <div key={index} className="summary-bullet">{trimmed}</div>;
     }
-    if (/^\d+[\.\)]/.test(trimmed)) {
+    if (/^\d+[.)]/.test(trimmed)) {
       return <div key={index} className="summary-numbered">{trimmed}</div>;
     }
     return <div key={index} className="summary-paragraph">{trimmed}</div>;
