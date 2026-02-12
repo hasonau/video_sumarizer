@@ -32,17 +32,18 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-// Health check endpoint
+// Health check / deployment success - visit root URL to confirm APIs are running
 app.get('/', (req, res) => {
-  res.json({ 
-    message: 'YT Summarizer API working!',
+  res.json({
+    success: true,
+    message: 'APIs are running',
+    status: 'ok',
     version: '2.0.0',
-    features: [
-      'Background job processing',
-      'YouTube URL validation',
-      'Video duration checking',
-      'Map-reduce summarization'
-    ]
+    endpoints: {
+      'POST /api/summarize': 'YouTube URL - create summarization job',
+      'POST /api/upload': 'Upload video file - create summarization job',
+      'GET /api/status/:jobId': 'Get job status and result'
+    }
   });
 });
 
