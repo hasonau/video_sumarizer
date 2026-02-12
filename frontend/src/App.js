@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 function App() {
   const [url, setUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -20,7 +22,7 @@ function App() {
 
     const pollInterval = setInterval(async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/status/${jobId}`);
+        const res = await axios.get(`${API_BASE}/api/status/${jobId}`);
         const status = res.data.status;
         const progressData = res.data.progress || 0;
         const stage = res.data.stage || 'processing';
@@ -107,14 +109,14 @@ function App() {
         const formData = new FormData();
         formData.append('video', selectedFile);
         
-        res = await axios.post('http://localhost:5000/api/upload', formData, {
+        res = await axios.post(`${API_BASE}/api/upload`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
       } else {
         // YouTube URL
-        res = await axios.post('http://localhost:5000/api/summarize', { url });
+        res = await axios.post(`${API_BASE}/api/summarize`, { url });
       }
       
       setJobId(res.data.jobId);
